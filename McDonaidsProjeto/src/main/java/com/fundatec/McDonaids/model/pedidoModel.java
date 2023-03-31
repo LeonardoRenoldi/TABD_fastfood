@@ -1,4 +1,4 @@
-package model;
+package com.fundatec.McDonaids.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
