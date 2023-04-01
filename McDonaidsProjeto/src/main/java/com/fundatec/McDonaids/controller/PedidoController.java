@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Validated
@@ -37,7 +38,7 @@ public class PedidoController {
     @PostMapping(value="/post")
     public ResponseEntity<pedidoModel> createPedido(@RequestBody pedidoModel pedido) {
         this.repository.save(pedido);
-        return new ResponseEntity<pedidoModel>(HttpStatus.CREATED);
+        return new ResponseEntity ("Criado com sucesso !",HttpStatus.CREATED);
     }
 
     @GetMapping("/pedidos")
@@ -46,11 +47,24 @@ public class PedidoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarPedido(@PathVariable Integer id) {
+    public ResponseEntity<pedidoModel> deletarPedido(@PathVariable Integer id) {
          pedidoService.deletarProduto(id);
-        return new ResponseEntity(new Error("Deletado com sucesso!"), HttpStatus.GONE);
+        return new ResponseEntity("Deletado com sucesso !", HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/atualizar_pedido/{id}", method =  RequestMethod.PUT)
+    public ResponseEntity<pedidoModel> Put(@PathVariable(value = "id") Integer id,  @RequestBody pedidoModel newPedido)
+    {
+        Optional<pedidoModel> pedidoAntigo = repository.findById(id);
+        if(pedidoAntigo.isPresent()){
+            pedidoModel pedido = pedidoAntigo.get();
+            pedido.setQuantidade(newPedido.getQuantidade());
+            repository.save(pedido);
+            return new ResponseEntity ("Atualizado com Sucesso !", HttpStatus.OK);
+        }
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
 
 
